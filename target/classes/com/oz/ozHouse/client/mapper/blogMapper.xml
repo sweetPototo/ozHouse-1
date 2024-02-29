@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.client.mapper.blogMapper">
+
+	 <insert id="insertBlog" parameterType="BlogDTO">
+		insert into blog values(blog_num_seq.nextval, #{member_id, jdbcType=VARCHAR}, #{blog_subject, jdbcType=VARCHAR}, #{blog_content, jdbcType=VARCHAR}, #{blog_image, jdbcType=VARCHAR}, sysdate, #{blog_like, jdbcType=NUMERIC}, #{blog_room_type, jdbcType=VARCHAR}, 0)
+	 </insert>
+	 
+	<select id="blog_list" resultType="BlogDTO">
+		select * from blog ORDER BY blog_num DESC
+	</select>
+	
+	<select id="blog_get" parameterType="int" resultType="BlogDTO">
+		select * from blog where blog_num = #{num}
+	</select>
+	
+	<update id="plus_readcount">
+		update blog set readcount = readcount + 1 where blog_num = #{num}
+	</update>
+
+</mapper>

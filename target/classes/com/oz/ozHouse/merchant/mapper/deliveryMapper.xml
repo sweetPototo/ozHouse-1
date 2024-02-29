@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oz.ozHouse.merchant.mapper.deliveryMapper">
+
+	<select id="deliveryAllList" parameterType="Map" resultType="ListDTO">
+		SELECT * FROM ORDER_TB ot JOIN PRODUCT p ON 
+		ot.PRODUCT_NUM = p.PRODUCT_NUM WHERE p.MER_NUM = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok' ORDER BY ot.ORDER_DATE DESC
+	</select>
+	
+	<select id="countDelivery" parameterType="Map" resultType="int">
+		SELECT count(*) FROM ORDER_TB ot JOIN PRODUCT p ON 
+		ot.PRODUCT_NUM = p.PRODUCT_NUM WHERE p.MER_NUM = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok'
+	</select>
+	
+	<select id="deliveryLikeList" parameterType="Map" resultType="ListDTO">
+		SELECT * FROM ORDER_TB ot JOIN PRODUCT p ON 
+		ot.PRODUCT_NUM = p.PRODUCT_NUM WHERE p.MER_NUM = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok'  
+		AND ot.order_delivery_now = #{mode} ORDER BY ot.ORDER_DATE DESC
+	</select>
+	
+	<select id="countDeliveryLike" parameterType="Map" resultType="int">
+		SELECT count(*) FROM ORDER_TB ot JOIN PRODUCT p ON 
+		ot.PRODUCT_NUM = p.PRODUCT_NUM WHERE p.MER_NUM = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok'  
+		AND ot.order_delivery_now = #{mode}
+	</select>
+	
+	<select id="searchDeliveryList" parameterType="Map" resultType="ListDTO">
+	SELECT * FROM ORDER_TB ot JOIN PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+	WHERE p.MER_NUM = #{mer_num} 
+		<if test="startDate != null and endDate != null">
+			and ot.order_date between #{startDate} and #{endDate} 
+		</if>
+		<if test="mode != 'all'">
+			and ot.order_delivery_now = #{mode}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    ot.order_code LIKE '%' || #{searchString}|| '%'
+			    OR ot.member_id LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_date, '') LIKE '%' || #{searchString}|| '%'
+			    OR p.product_name LIKE '%' || #{searchString}|| '%'
+			    OR ot.order_place LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_count, '') LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_price, '') LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_delivery_now, '') LIKE '%' || #{searchString}|| '%'
+			)
+		</if>
+		<if test="search != null and search == 'member_id'">
+			and ot.member_id like '%' || #{searchString}|| '%'
+		</if>
+		<if test="search != null and search == 'product_name'">
+			and p.product_name like '%' || #{searchString}|| '%'
+		</if>
+		<if test="search != null and search == 'order_num'">
+			and ot.order_code like '%' || #{searchString}|| '%'
+		</if>
+		and ot.ORDER_ORDERLIKE = 'ok'
+	</select>
+	
+	<select id="countSearchDelivery" parameterType="Map" resultType="int">
+	SELECT count(*) FROM ORDER_TB ot JOIN PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+	WHERE p.MER_NUM = #{mer_num} 
+		<if test="startDate != null and endDate != null">
+			and ot.order_date between #{startDate} and #{endDate} 
+		</if>
+		<if test="mode != 'all'">
+			and ot.order_delivery_now = #{mode}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    ot.order_code LIKE '%' || #{searchString}|| '%'
+			    OR ot.member_id LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_date, '') LIKE '%' || #{searchString}|| '%'
+			    OR p.product_name LIKE '%' || #{searchString}|| '%'
+			    OR ot.order_place LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_count, '') LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_price, '') LIKE '%' || #{searchString}|| '%'
+			    OR NVL(ot.order_delivery_now, '') LIKE '%' || #{searchString}|| '%'
+			)
+		</if>
+		<if test="search != null and search == 'member_id'">
+			and ot.member_id like '%' || #{searchString}|| '%'
+		</if>
+		<if test="search != null and search == 'product_name'">
+			and p.product_name like '%' || #{searchString}|| '%'
+		</if>
+		<if test="search != null and search == 'order_num'">
+			and ot.order_code like '%' || #{searchString}|| '%'
+		</if>
+		and ot.ORDER_ORDERLIKE = 'ok'
+	</select>
+	
+</mapper>

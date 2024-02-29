@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans 
+           https://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context 
+           https://www.springframework.org/schema/context/spring-context.xsd">
+           	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<property name="username" value="oz01" />
+		<property name="password" value="oz01" />
+	</bean>	
+	
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="typeAliasesPackage" value="com.oz.ozHouse.dto"/>
+	    <!-- mapperLocations 프로퍼티에 리스트를 사용하여 여러 매퍼 경로를 지정 -->
+	    <property name="mapperLocations">
+	        <list>
+	            <value>classpath:com/oz/ozHouse/client/mapper/*.xml</value>
+	            <value>classpath:com/oz/ozHouse/merchant/mapper/*.xml</value>
+	            <!-- 필요에 따라 추가적인 매퍼 경로 지정 -->
+	        </list>
+	    </property>
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache"> 
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>	
+	
+		<!-- 이메일 인증 관련 등록 -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.naver.com"/>
+	    <property name="port" value="465"/>
+
+	    <!-- 보안연결 SSL과 관련된 설정 -->
+	    <property name="javaMailProperties">
+		    <props>
+		      <prop key="mail.smtp.auth">true</prop>
+		      <prop key="mail.smtp.starttls.enable">true</prop>
+		      <prop key="mail.smtps.checkserveridentity">true</prop>
+		      <prop key="mail.smtps.ssl.trust">*</prop>
+		      <prop key="mail.debug">true</prop>
+		      <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+		     </props>
+	     </property>
+	</bean>
+   <context:component-scan base-package="com.oz.ozHouse.client.service"/>
+   <!-- 테스트용 잡  -->
+   <bean id="testJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+      <property name="targetObject" ref="bestService" />
+      <property name="targetMethod" value="testJobMethod" />
+      <property name="concurrent" value="false" />
+   </bean>
+   <!-- 테스트용  트리거 -->
+   <bean id="testJobTrigger"
+      class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+      <property name="jobDetail" ref="testJob" />
+      <property name="cronExpression" value="0 0/2 * * * ?" />
+   </bean>
+   <bean id="testJobScheduler"
+      class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+      <property name="triggers">
+         <list>
+            <ref bean="testJobTrigger" />
+         </list>
+      </property>
+   </bean>
+
+</beans>

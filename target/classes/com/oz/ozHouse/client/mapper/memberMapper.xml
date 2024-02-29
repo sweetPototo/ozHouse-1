@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.client.mapper.memberMapper"> 
+	
+	<insert id="insertMember" parameterType="MemberDTO">
+		insert into member 
+		values(member_num_seq.nextval, null, #{member_id}, #{member_passwd, jdbcType=VARCHAR}, 
+		#{member_nickname, jdbcType=VARCHAR}, #{member_email}, 
+		#{member_image, jdbcType=VARCHAR}, null, null, null, null, null, null, null, null, null, 
+		default, default, sysdate, null)
+	</insert>
+	
+	<select id="getMember" parameterType="String" resultType="memberDTO">
+		select * from member where member_id = #{member_id}
+	</select>
+	
+	<update id="updateMember" parameterType="MemberDTO">
+		update member set member_image=#{member_image, jdbcType=VARCHAR}, member_nickname=#{member_nickname}, 
+		member_hp1=#{member_hp1, jdbcType=VARCHAR},
+		member_hp2=#{member_hp2, jdbcType=VARCHAR}, 
+		member_hp3=#{member_hp3, jdbcType=VARCHAR}, 
+		member_postcode1=#{member_postcode1, jdbcType=VARCHAR}, 
+		member_postcode2=#{member_postcode2, jdbcType=VARCHAR}, 
+		member_postcode3=#{member_postcode3, jdbcType=VARCHAR}, 
+		member_address1=#{member_address1, jdbcType=VARCHAR}, 
+		member_address2=#{member_address2, jdbcType=VARCHAR}, 
+		member_address3=#{member_address3, jdbcType=VARCHAR}
+		where member_id = #{member_id}
+	</update>
+	
+	<select id="checkId" parameterType="String" resultType="memberDTO">
+		select * from member where member_id=#{member_id}
+	</select>
+	
+	<select id="checkEmail" parameterType="String" resultType="memberDTO">
+		select * from member where member_email=#{member_email}
+	</select>
+
+	<!-- 카카오 정보 찾기 -->
+	<select id="findKakao" parameterType="map" resultType="MemberDTO">
+		select *
+		from member
+		where member_email=#{member_email}
+	</select>
+	
+	<update id="updatePasswd" parameterType="MemberDTO">
+		update member set member_passwd=#{member_passwd}
+		where member_id = #{member_id}
+	</update>
+	
+	<select id="checkNaver" parameterType="String" resultType="MemberDTO">
+		select *
+		from member
+		where member_email = #{member_email}
+	</select>
+	
+	<select id="checkMemberIdEmail" parameterType="String" resultType="String">
+		select member_id
+		from member
+		where member_email = #{member_email}
+	</select>
+	
+	<update id="deleteMember" parameterType="MemberDTO">
+		update member set MEMBER_DELETEDATE = sysdate where member_num = #{member_num}
+	</update>
+	
+	<select id="confirmDelete" parameterType="String" resultType="String">
+		select member_deletedate from member where member_id = #{member_id}
+	</select>
+	
+</mapper>

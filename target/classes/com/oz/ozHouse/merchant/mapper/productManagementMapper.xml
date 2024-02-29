@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.merchant.mapper.productManagementMapper">
+
+	<delete id="merchant_deleteProduct" parameterType="String">
+		delete from product where product_num=#{product_num}
+	</delete>
+	
+	<delete id="merchant_deletereProduct" parameterType="String">
+		delete from requestproduct where product_num=#{product_num}
+	</delete>
+	
+	<delete id="merchant_deletemsg" parameterType="int">
+		delete from msg where product_num=#{product_num} and status='product'
+	</delete>
+
+	<insert id="merchant_insertProduct" parameterType="productDTO">
+		insert into product values (product_num_seq.nextval,#{product_name},#{category_num},#{mer_num},#{product_image},#{product_image_pro},#{product_quantity},#{product_price},#{product_modifier},#{product_point},sysdate,'normal',0,'f',#{product_assembly_cost},#{product_discount_rate},#{product_discount_price}, #{product_image_pro_change}, #{product_image_change}, '0')
+	</insert>
+	
+	<select id="merchant_listCate" resultType="categoryDTO">
+		select * from category
+	</select>
+	
+	<select id="merchant_getInbrandByMerNum" parameterType="int" resultType="InbrandDTO">
+    	SELECT * FROM inbrand WHERE mer_num = #{mer_num}
+	</select>
+	
+	<select id="merchant_getCategoryByNum" parameterType="int" resultType="CategoryDTO">
+	    SELECT * FROM category WHERE category_num = #{category_num}
+	</select>
+	
+	<update id="merchant_deleteRe" parameterType="int">
+		delete from product where product_num=#{product_num}
+	</update>
+	
+	<select id="merchant_getProduct" parameterType="java.util.Map" resultType="productDTO">
+		SELECT p.*, c.category_name 
+	    FROM product p
+	    JOIN category c ON p.category_num = c.category_num
+	    WHERE ${key} = #{value}
+	</select>
+	
+	<select id="merchant_getreProduct" parameterType="java.util.Map" resultType="requestproductDTO">
+	    SELECT rp.*, c.category_name 
+	    FROM requestproduct rp
+	    JOIN category c ON rp.category_num = c.category_num
+	    WHERE ${key} = #{value}
+	</select>
+	
+	<update id="merchant_updateRe" parameterType="int">
+		update product set product_approval_status='ur', product_input_date = sysdate where product_num = #{product_num}
+	</update> 
+	
+	<update id="merchant_requestRe" parameterType="String">
+		update product set product_approval_status='dr', product_input_date = sysdate where product_num = #{product_num}
+	</update> 
+	
+	<insert id="merchant_updateProductInfo" parameterType="requestproductDTO">
+		insert into requestproduct values (#{product_num}, #{product_name}, #{category_num}, #{product_image}, #{product_image_pro}, #{product_price}, #{product_modifier}, #{product_point}, #{product_assembly_cost}, #{product_discount_rate}, #{product_discount_price},#{product_image_pro_change}, #{product_image_change})
+	</insert>
+	
+	<insert id="merchant_insertReProduct" parameterType="requestproductDTO">
+		insert into requestproduct values (#{product_num},'0',0,'0','0',0,'0',0,0,0,0,'0','0')
+	</insert>
+	
+	<insert id="merchant_insertimage" parameterType="requestproductDTO">
+		insert into requestproductimg values (#{product_image}, #{product_image_pro}, #{product_image_change}, #{product_image_pro_change}, #{product_num})
+	</insert>
+	
+	<insert id="merchant_updateproduct" parameterType="requestproductDTO">
+		insert into requestproduct values (#{product_num}, #{product_name}, #{category_num}, #{product_image}, #{product_image_pro}, #{product_price}, #{product_modifier}, #{product_point}, #{product_assembly_cost}, #{product_discount_rate}, #{product_discount_price},#{product_image_pro_change}, #{product_image_change})
+	</insert>
+	
+	<select id="merchant_requestListCount" parameterType="java.util.Map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM product p
+	    LEFT JOIN category c ON p.category_num = c.category_num
+	    WHERE p.mer_num = #{mer_num}
+        <include refid="merchant_requestCondition" />
+	</select>
+	
+	<select id="merchant_requestListProduct" parameterType="java.util.Map" resultType="productDTO">
+	    SELECT p.*, c.category_name
+	    FROM product p
+	    LEFT JOIN category c ON p.category_num = c.category_num
+		WHERE p.mer_num = #{mer_num}
+        <include refid="merchant_requestCondition" />
+	</select>
+		
+	<sql id="merchant_requestCondition">
+		<if test="product_approval_status != null and product_approval_status != 'all'">
+            <choose>
+                <when test="product_approval_status == 'approval_cancle'">
+                    AND product_approval_status in ('fc', 'dc', 'uc')
+                </when>
+                <when test="product_approval_status == 'approval_wait'">
+                    AND product_approval_status in ('f', 'dr', 'ur')
+                </when>
+                <when test="product_approval_status == 'approval_pend'">
+                    AND product_approval_status = 're'
+                </when>
+                <when test="product_approval_status == 'approval_consideration'">
+                    AND product_approval_status = 'ca'
+                </when>
+                <when test="product_approval_status == 'approval_ok'">
+                    AND product_approval_status = 'ro'
+                </when>
+                <when test="product_approval_status == 'approved'">
+                    AND product_approval_status = 'ok'
+                </when>
+            </choose>
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND product_input_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="search != null and searchString != null and searchString != ''">
+            <choose>
+            	<when test="search == 'all'">
+                    AND (
+                    	product_num LIKE '%' || #{searchString} || '%' OR
+                   		product_name LIKE '%' || #{searchString} || '%' OR
+                   		c.category_name LIKE '%' || #{searchString} || '%'
+                   	)
+                </when>
+                <when test="search == 'product_num'">
+                    AND product_num LIKE '%' || #{searchString} || '%'
+                </when>
+                <when test="search == 'product_name'">
+                    AND product_name LIKE '%' || #{searchString} || '%'
+                </when>
+                <when test="search == 'category_name'">
+                    AND c.category_name LIKE '%' || #{searchString} || '%'
+                </when>
+            </choose>
+        </if>
+	</sql>	
+		
+	<select id="merchant_listProduct" parameterType="java.util.Map" resultType="productDTO">
+		SELECT p.*, c.category_name
+	    FROM product p
+	    LEFT JOIN category c ON p.category_num = c.category_num
+	    WHERE p.mer_num = #{mer_num}
+	    <include refid="merchant_listConditions" />
+	</select>
+	
+	<select id="merchant_listCount" parameterType="java.util.Map" resultType="int">
+		SELECT COUNT(*)
+	    FROM product p
+	    LEFT JOIN category c ON p.category_num = c.category_num
+	    WHERE p.mer_num = #{mer_num}
+	    <include refid="merchant_listConditions" />
+	</select>
+	
+	<sql id="merchant_listConditions">
+		<if test="stock != null and stock != ''">
+			<choose>
+				<when test="stock == 'out'">
+					AND p.product_quantity = 0
+				</when>
+				<when test="stock == 'almost_out'">
+					AND p.product_quantity BETWEEN 1 AND 5
+				</when>
+				<when test="stock == 'good'">
+					AND p.product_quantity > 5
+				</when>
+			</choose>
+		</if>
+		<if test="product_approval_status != null and product_approval_status != 'all'">
+			<choose>
+				<when test="product_approval_status == 'approval_cancle'">
+					AND product_approval_status in ('fc', 'dc', 'uc')
+				</when>
+				<when test="product_approval_status == 'approval_wait'">
+					AND product_approval_status in ('f', 'dr', 'ur')
+				</when>
+				<when test="product_approval_status == 'approval_pend'">
+					AND product_approval_status = 're'
+				</when>
+				<when test="product_approval_status == 'approval_consideration'">
+					AND product_approval_status = 'ca'
+				</when>
+				<when test="product_approval_status == 'approval_ok'">
+					AND product_approval_status = 'ro'
+				</when>
+				<when test="product_approval_status == 'approved'">
+					AND product_approval_status = 'ok'
+				</when>
+			</choose>
+		</if>
+		<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+			AND p.product_input_date BETWEEN #{startDate} AND #{endDate}
+		</if>
+		<if test="search != null and searchString != null and searchString != ''">
+			<choose>
+				<when test="search == 'all'">
+					AND (
+						p.product_num LIKE '%' || #{searchString} || '%' OR
+						p.product_name LIKE '%' || #{searchString} || '%' OR
+						c.category_name LIKE '%' || #{searchString} || '%'
+					)
+				</when>
+				<when test="search == 'product_num'">
+					AND p.product_num LIKE '%' || #{searchString} || '%'
+				</when>
+				<when test="search == 'product_name'">
+					AND p.product_name LIKE '%' || #{searchString} || '%'
+				</when>
+				<when test="search == 'category_name'">
+					AND c.category_name LIKE '%' || #{searchString} || '%'
+				</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<delete id="merchant_fcancle" parameterType="int">
+		delete from product where product_num = #{product_num}
+	</delete>
+	
+	<update id="merchant_dcancle" parameterType="int">
+		update product set product_approval_status='dr', product_input_date = sysdate where product_num = #{product_num}
+	</update>
+	
+	<update id="merchant_ucancle" parameterType="String">
+		update product set product_approval_status='f', product_input_date = sysdate where product_num = #{product_num}
+	</update>
+	
+	<select id="merchant_msgView" parameterType="int" resultType="String">
+		select msg from msg where product_num=#{product_num} and status='product'
+	</select>
+
+	<select id="merchant_stockListProduct" parameterType="java.util.Map" resultType="productDTO">
+		SELECT p.*, c.category_name
+		FROM product p
+		LEFT JOIN category c ON p.category_num = c.category_num
+		WHERE p.mer_num = #{mer_num}
+		<include refid="merchant_stockCondition" />
+	</select>
+
+	<select id="merchant_stockListCount" parameterType="java.util.Map" resultType="int">
+		SELECT COUNT(*)
+		FROM product p
+		LEFT JOIN category c ON p.category_num = c.category_num
+		WHERE p.mer_num = #{mer_num}
+		<include refid="merchant_stockCondition" />
+	</select>
+
+	<sql id="merchant_stockCondition">
+		<if test="spec != null and !spec.isEmpty()">
+			AND
+			<foreach item="item" collection="spec" separator="AND" open="(" close=")">
+				<if test="item == 'todays'">
+					p.product_today != '0'
+				</if>
+				<if test="item == 'best'">
+					p.product_spen == 'best'
+				</if>
+				<if test="item == 'normal'">
+					p.product_spen == 'normal'
+				</if>
+			</foreach>
+		</if>
+		<if test="stock != null">
+			<choose>
+				<when test="stock == 'out'">
+					AND p.product_quantity = 0
+				</when>
+				<when test="stock == 'almost_out'">
+					AND p.product_quantity BETWEEN 1 AND 5
+				</when>
+				<when test="stock == 'good'">
+					AND p.product_quantity &gt; 5
+				</when>
+			</choose>
+		</if>
+		<if test="search != null and searchString != null and searchString != ''">
+			<choose>
+				<when test="search == 'all'">
+					AND (
+					p.product_num LIKE '%' || #{searchString} || '%' OR
+					p.product_name LIKE '%' || #{searchString} || '%'OR
+					c.category_name LIKE '%' || #{searchString} || '%'
+					)
+				</when>
+				<when test="search == 'product_num'">
+					AND p.product_num LIKE '%' || #{searchString} || '%'
+				</when>
+				<when test="search == 'product_name'">
+					AND p.product_name LIKE '%' || #{searchString} || '%'
+				</when>
+				<when test="search == 'category_name'">
+					AND c.category_name LIKE '%' || #{searchString} || '%'
+				</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<update id="merchant_updateStock" parameterType="java.util.Map">
+	   update product set product_quantity=#{product_quantity} where product_num = #{product_num}
+	</update>
+</mapper>

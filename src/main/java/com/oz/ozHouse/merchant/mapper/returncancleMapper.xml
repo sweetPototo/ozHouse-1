@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oz.ozHouse.merchant.mapper.returncancleMapper">
+
+	<select id="orderList" parameterType="Map" resultType="ListDTO">
+		SELECT 
+			* 
+		FROM 
+			ORDER_TB ot 
+		JOIN 
+			PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		WHERE 
+			p.MER_NUM = #{mer_num} 
+		AND 
+			ot.ORDER_ORDERLIKE = #{order_orderlike} ORDER BY ot.ORDER_CANCELDATE DESC
+	</select>
+	
+	<select id="searchOrderList" parameterType="Map" resultType="ListDTO">
+	SELECT * FROM ORDER_TB ot JOIN PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+	WHERE p.MER_NUM = #{mer_num} 
+		<if test="startDate != null and endDate != null">
+			and ot.order_canceldate between #{startDate} and #{endDate} 
+		</if>
+		<if test="order_refund != 'all'">
+			and ot.order_refund = #{order_refund}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    ot.order_code LIKE '%' || #{searchString}||'%'
+			    OR ot.member_id LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_canceldate, '') LIKE '%' || #{searchString}||'%'
+			    OR p.product_name LIKE '%' || #{searchString}||'%'
+			    OR ot.order_place LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_count, '') LIKE '%' || #{searchString}||'%'
+			    OR NVL(p.product_price, '') LIKE '%' || #{searchString}||'%'
+			    OR ot.order_refund LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_delivery_now, '') LIKE '%' || #{searchString}||'%'
+			)
+		</if>
+		<if test="search != null and search == 'member_id'">
+			and ot.member_id like '%' || #{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'category_name'">
+			and ot.category_name like '%' || {searchString}||'%'
+		</if>
+		<if test="search != null and search == 'product_name'">
+			and p.product_name like '%' || #{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'order_num'">
+			and ot.order_code like '%' || #{searchString}||'%'
+		</if>
+		and ot.ORDER_ORDERLIKE like '%' || #{order_orderlike} ||'%'
+	</select>
+	
+	<select id="countReturn" parameterType="Map" resultType="int">
+		SELECT 
+			count(*) 
+		FROM 
+			ORDER_TB ot 
+		JOIN 
+			PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		WHERE 
+			p.MER_NUM = #{mer_num} 
+		AND 
+			ot.ORDER_ORDERLIKE = #{order_orderlike} ORDER BY ot.ORDER_CANCELDATE DESC
+	</select>
+	
+	<select id="countSearchReturn" parameterType="Map" resultType="int">
+	SELECT count(*) FROM ORDER_TB ot JOIN PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+	WHERE p.MER_NUM = #{mer_num} 
+		<if test="startDate != null and endDate != null">
+			and ot.order_canceldate between #{startDate} and #{endDate} 
+		</if>
+		<if test="order_refund != 'all'">
+			and ot.order_refund = #{order_refund}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    ot.order_code LIKE '%' || #{searchString}||'%'
+			    OR ot.member_id LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_canceldate, '') LIKE '%' || #{searchString}||'%'
+			    OR p.product_name LIKE '%' || #{searchString}||'%'
+			    OR ot.order_place LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_count, '') LIKE '%' || #{searchString}||'%'
+			    OR NVL(p.product_price, '') LIKE '%' || #{searchString}||'%'
+			    OR ot.order_refund LIKE '%' || #{searchString}||'%'
+			    OR NVL(ot.order_delivery_now, '') LIKE '%' || #{searchString}||'%'
+			)
+		</if>
+		<if test="search != null and search == 'member_id'">
+			and ot.member_id like '%' || #{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'category_name'">
+			and ot.category_name like '%' || {searchString}||'%'
+		</if>
+		<if test="search != null and search == 'product_name'">
+			and p.product_name like '%' || #{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'order_num'">
+			and ot.order_code like '%' || #{searchString}||'%'
+		</if>
+		and ot.ORDER_ORDERLIKE like '%' || #{order_orderlike} ||'%'
+	</select>
+	
+	<update id="returnCancelCheck" parameterType="Map">
+		update order_tb set order_refund = 't' where order_code = #{order_code} and product_num = #{product_num}
+	</update>
+	
+</mapper>

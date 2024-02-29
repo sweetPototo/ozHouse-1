@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.merchant.mapper.boardMapper"> 
+
+	<select id="productQAList" parameterType="java.util.Map" resultType="Product_QA_DTO">
+	    SELECT pq.*, p.product_name 
+	    FROM product_qa pq
+	    JOIN product p ON pq.product_num = p.product_num
+	    <where>
+	    p.mer_num = #{mer_num}
+	        <if test="product_QA_state == 'answer_wait'">
+	            AND pq.product_QA_state = 'f'
+	        </if>
+	        <if test="product_QA_state == 'answer_complete'">
+	            AND pq.product_QA_state = 't'
+	        </if>
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND pq.product_QA_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	            	<when test="search == 'all'">
+						AND (
+							pq.product_qa_content LIKE '%' || #{searchString} || '%' OR
+							pq.member_id LIKE '%' || #{searchString} || '%' OR
+							pq.product_inquiry_type LIKE '%' || #{searchString} || '%' OR
+							p.product_name LIKE '%' || #{searchString} || '%'
+						)
+					</when> 
+	                <when test="search == 'product_qa_content'">
+	                    AND pq.product_qa_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND pq.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_inquiry_type'">
+	                    AND pq.product_inquiry_type LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_name'">
+	                    AND p.product_name LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+
+	<select id="productqaCount" parameterType="java.util.Map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM product_qa pq
+	    JOIN product p ON pq.product_num = p.product_num
+	    <where>
+	    p.mer_num = #{mer_num}
+	        <if test="product_QA_state == 'answer_wait'">
+	            AND pq.product_QA_state = 'f'
+	        </if>
+	        <if test="product_QA_state == 'answer_complete'">
+	            AND pq.product_QA_state = 't'
+	        </if>
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND pq.product_QA_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	            	<when test="search == 'all'">
+						AND (
+							pq.product_qa_content LIKE '%' || #{searchString} || '%' OR
+							pq.member_id LIKE '%' || #{searchString} || '%' OR
+							pq.product_inquiry_type LIKE '%' || #{searchString} || '%' OR
+							p.product_name LIKE '%' || #{searchString} || '%'
+						)
+					</when> 
+	                <when test="search == 'product_qa_content'">
+	                    AND pq.product_qa_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND pq.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_inquiry_type'">
+	                    AND pq.product_inquiry_type LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_name'">
+	                    AND p.product_name LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+
+	<select id="productContent" parameterType="int" resultType="Product_QA_DTO">
+		SELECT pq.*, p.product_name 
+		FROM product_qa pq
+		JOIN product p ON pq.product_num = p.product_num
+		WHERE product_QA_num=#{product_QA_num}
+	</select>
+
+	<insert id="productReQa" parameterType="java.util.Map">
+		insert into product_reqa values(#{product_reQA_num},#{product_num},#{member_id},#{product_reQA_content},sysdate)
+	</insert>
+	
+	<select id="productReContent" parameterType="int" resultType="Product_reQA_DTO">
+		select * from product_reqa where product_reQA_num=#{product_reQA_num}
+	</select>
+	
+	<update id="productReQaUpdate" parameterType="Product_reQA_DTO">
+		update product_reqa set product_reQA_content=#{product_reQA_content}, product_reQA_date=sysdate where product_reQA_num=#{product_reQA_num}
+	</update>
+	
+	<update id="productQAstate" parameterType="int">
+		update product_qa set product_QA_state = 't' where product_QA_num=#{product_QA_num}
+	</update>
+
+	<select id="orderQAList" parameterType="java.util.Map" resultType="Order_QADTO">
+	    SELECT oq.*
+	    FROM order_qa oq
+	    JOIN order_tb ot ON ot.order_num = oq.order_num
+	    JOIN product p ON p.product_num = ot.product_num
+	    <where>
+	        p.mer_num = #{mer_num}
+	        <if test="order_QA_state == 'answer_wait'">
+	            AND oq.order_QA_state = 'f'
+	        </if>
+	        <if test="order_QA_state == 'answer_complete'">
+	            AND oq.order_QA_state = 't'
+	        </if>
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND oq.order_qa_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	                <when test="search == 'all'">
+	                    AND (
+	                        ot.order_num LIKE '%' || #{searchString} || '%' OR
+	                        oq.order_inquiry_type LIKE '%' || #{searchString} || '%' OR
+	                        oq.order_qa_content LIKE '%' || #{searchString} || '%' OR
+	                        oq.member_id LIKE '%' || #{searchString} || '%'
+	                    )
+	                </when>
+	                <when test="search == 'order_num'">
+	                    AND ot.order_num LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'order_inquiry_type'">
+	                    AND oq.order_inquiry_type LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'order_qa_content'">
+	                    AND oq.order_qa_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND oq.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+
+	<select id="orderContent" parameterType="int" resultType="Order_QADTO">
+		select * from order_qa where order_QA_num=#{order_QA_num}
+	</select>
+	
+	<insert id="orderReQa" parameterType="java.util.Map">
+		insert into order_reqa values(#{order_reQA_num},#{member_id},#{order_reQA_content},sysdate)
+	</insert>
+	
+	<select id="orderReContent" parameterType="int" resultType="Order_reQADTO">
+		select * from order_reqa where order_reQA_num=#{order_reQA_num}
+	</select>
+	
+	<update id="orderReQaUpdate" parameterType="Order_reQADTO">
+		update order_reqa set order_reQA_content=#{order_reQA_content}, order_reQA_date=sysdate where order_reQA_num=#{order_reQA_num}
+	</update>
+	
+	<update id="orderQAstate" parameterType="int">
+		update order_qa set order_QA_state = 't' where order_QA_num=#{order_QA_num}
+	</update>
+
+	<select id="orderqaCount" parameterType="java.util.Map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM order_qa oq
+	    JOIN order_tb ot ON ot.order_num = oq.order_num
+	    JOIN product p ON p.product_num = ot.product_num
+	    <where>
+	        p.mer_num = #{mer_num}
+	        <if test="order_QA_state == 'answer_wait'">
+	            AND oq.order_QA_state = 'f'
+	        </if>
+	        <if test="order_QA_state == 'answer_complete'">
+	            AND oq.order_QA_state = 't'
+	        </if>
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND oq.order_qa_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	                <when test="search == 'all'">
+	                    AND (
+	                        ot.order_num LIKE '%' || #{searchString} || '%' OR
+	                        oq.order_inquiry_type LIKE '%' || #{searchString} || '%' OR
+	                        oq.order_qa_content LIKE '%' || #{searchString} || '%' OR
+	                        oq.member_id LIKE '%' || #{searchString} || '%'
+	                    )
+	                </when>
+	                <when test="search == 'order_num'">
+	                    AND ot.order_num LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'order_inquiry_type'">
+	                    AND oq.order_inquiry_type LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'order_qa_content'">
+	                    AND oq.order_qa_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND oq.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+
+	<select id="reviewList" parameterType="java.util.Map" resultType="ReviewDTO">
+	    SELECT r.*, p.product_name 
+	    FROM review r
+	    JOIN product p ON r.product_num = p.product_num
+	    <where>
+	        p.mer_num = #{mer_num}
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND r.review_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="review_star != null and review_star != 'all'">
+	            AND r.review_star = #{review_star}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	                <when test="search == 'all'">
+						AND (
+							r.review_content LIKE '%' || #{searchString} || '%' OR
+							p.product_name LIKE '%' || #{searchString} || '%' OR
+							r.member_id LIKE '%' || #{searchString} || '%'
+						)
+					</when>            	
+	                <when test="search == 'review_content'">
+	                    AND r.review_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_name'">
+	                    AND p.product_name LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND r.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+	
+	<select id="reviewContent" parameterType="int" resultType="ReviewDTO">
+		SELECT r.*, p.product_name 
+	    FROM review r
+	    JOIN product p ON r.product_num = p.product_num
+	    Where review_num=#{review_num}
+	</select>
+	
+	<select id="reviewqaCount" parameterType="java.util.Map" resultType="int">
+        SELECT COUNT(*)
+	    FROM review r
+	    JOIN product p ON r.product_num = p.product_num
+	    <where>
+	        p.mer_num = #{mer_num}
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND r.review_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        <if test="review_star != null and review_star != 'all'">
+	            AND r.review_star = #{review_star}
+	        </if>
+	        <if test="search != null and searchString != null and searchString != ''">
+	            <choose>
+	                <when test="search == 'all'">
+						AND (
+							r.review_content LIKE '%' || #{searchString} || '%' OR
+							p.product_name LIKE '%' || #{searchString} || '%' OR
+							r.member_id LIKE '%' || #{searchString} || '%'
+						)
+					</when>            	
+	                <when test="search == 'review_content'">
+	                    AND r.review_content LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'product_name'">
+	                    AND p.product_name LIKE '%' || #{searchString} || '%'
+	                </when>
+	                <when test="search == 'member_id'">
+	                    AND r.member_id LIKE '%' || #{searchString} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oz.ozHouse.merchant.mapper.salesMapper">
+
+	<select id="selectListDay" parameterType="Map" resultType="ListDTO">
+		SELECT 
+			* 
+		FROM 
+			ORDER_TB ot 
+		JOIN 
+			PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		WHERE 
+			p.MER_NUM = #{mer_num}
+			and ot.order_date between #{startDate} 
+			and #{endDate}
+			and ot.order_delivery_now in('complete', 'delivery')
+	</select>
+	
+	<select id="selectListMonth" parameterType="Map" resultType="ListDTO">
+		SELECT 
+		    SUBSTR(ORDER_DATE, 0, 5) AS ORDER_DATE,
+		    SUM(product_price) AS product_price,
+		    SUM(product_assembly_cost) AS product_assembly_cost,
+		    SUM(order_dis_coupon) AS order_dis_coupon,
+		    SUM(ORDER_DIS_DISCOUNT) AS ORDER_DIS_DISCOUNT 
+		FROM 
+		    ORDER_TB ot
+		JOIN 
+		    PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM
+		WHERE 
+		    SUBSTR(ORDER_DATE, 0, 5) between #{startDate} and #{endDate}
+		    AND ot.ORDER_DELIVERY_NOW IN ('complete', 'delivery')
+		    AND p.MER_NUM = #{mer_num}
+		    AND ot.ORDER_ORDERLIKE = 'ok'
+		GROUP BY 
+		    SUBSTR(ORDER_DATE, 0, 5)
+	</select>
+	
+	<select id="selectListYear" parameterType="Map" resultType="ListDTO">
+		SELECT 
+		    SUBSTR(ORDER_DATE, 0, 2) AS ORDER_DATE,
+		    SUM(product_price) AS product_price,
+		    SUM(product_assembly_cost) AS product_assembly_cost,
+		    SUM(order_dis_coupon) AS order_dis_coupon,
+		    SUM(ORDER_DIS_DISCOUNT) AS ORDER_DIS_DISCOUNT 
+		FROM 
+		    ORDER_TB ot
+		JOIN 
+		    PRODUCT p ON ot.PRODUCT_NUM = p.PRODUCT_NUM
+		WHERE 
+		    SUBSTR(ORDER_DATE, 0, 2) between #{startYear} and #{endYear}
+		    AND ot.ORDER_DELIVERY_NOW IN ('complete', 'delivery')
+		    AND p.MER_NUM = #{mer_num}
+		    AND ot.ORDER_ORDERLIKE = 'ok'
+		GROUP BY 
+		    SUBSTR(ORDER_DATE, 0, 2)
+	</select>
+	
+	<select id="month" resultType="String">
+		SELECT SUBSTR(MIN(order_date), 0, 5) FROM ORDER_TB ot
+	</select>
+	
+	<select id="year" resultType="String">
+		SELECT SUBSTR(MIN(order_date), 0, 2) FROM ORDER_TB ot
+	</select>
+</mapper>

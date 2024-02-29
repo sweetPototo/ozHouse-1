@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.client.mapper.mypageMapper"> 
+	
+	<select id="getOrderProduct" parameterType="int" resultType="OrderDTO">
+		select * from order_tb where member_num = #{member_num}
+	</select>
+	
+	<select id="getMyReview" parameterType="int" resultType="ReviewDTO">
+		select * from review where member_num = #{member_num}
+	</select>
+
+	<insert id="insertReview" parameterType="ReviewDTO">
+		insert into review
+		values(review_seq.nextval, #{member_id}, #{review_star}, #{review_subject}, #{review_content}, 
+		#{review_content}, #{review_image}, #{product_num}, #{review_like}, #{review_date})
+	</insert>
+	
+	<select id="getReview" parameterType="int" resultType="ReviewDTO">
+		select * from review 
+		where review_num = #{review_num}
+	</select>
+	
+	<select id="getUserCoupon" parameterType="int" resultType="Mer_CouponDTO">
+		select *
+		from mer_coupon a
+			inner join user_coupon b
+			on a.mer_couponnum = b.mer_coupon_num
+		where b.member_num = #{member_num} and b.order_code IS NULL
+	</select>
+
+	<select id="getMerCouponList" parameterType="int" resultType="Mer_CouponDTO">
+	    SELECT *
+	    FROM mer_coupon a
+	    LEFT JOIN user_coupon b ON a.mer_couponnum = b.mer_coupon_num AND b.member_num = #{member_num}
+	    WHERE b.mer_coupon_num IS NULL
+	</select>
+
+	<insert id="insertUserCoupon" parameterType="User_CouponDTO">
+		insert into user_coupon
+		values(user_coupon_num_seq.nextval, #{mer_coupon_num}, #{member_num}, #{mer_num}, #{user_coupon_active}, 
+		#{mer_couponenddate}, null)
+	</insert>
+	
+	<select id="getAllProduct" resultType="ProductDTO">
+		select * from product
+	</select>
+	
+	<select id="checkScrap" parameterType="hashmap" resultType="ScrapDTO">
+		select * from scrap
+		where member_num = #{member_num} and product_num = #{product_num}
+	</select>
+	
+	<insert id="insertScrap" parameterType="hashmap">
+		insert into scrap values(scrap_seq.nextval, #{member_num}, #{product_num}, sysdate)
+	</insert>
+			
+	<select id="getMyScrap" parameterType="int" resultType="ProductDTO">
+		select *
+		from product a
+			inner join scrap b
+			on a.product_num = b.product_num
+		where b.member_num = #{member_num}
+	</select>
+	
+	<delete id="deleteScrap" parameterType="hashmap">
+		delete from scrap
+		where member_num = #{member_num} and product_num = #{product_num}
+	</delete>
+	
+	<select id="couponCount" parameterType="int" resultType="int">
+		select count(user_coupon_num) from user_coupon where member_num = #{member_num} and order_code IS NULL
+	</select>
+	
+	<select id="getProductPoint" parameterType="int" resultType="int">
+		select product_point from product where product_num = #{product_num}
+	</select>
+	
+	<select id="getOrderCodeSearch" parameterType="SearchDTO" resultType="java.lang.Long">
+	    select distinct order_code from order_tb 
+	    where member_id = #{member_id}
+	    <if test="mode == 'period'">			
+       		 AND TO_DATE(order_date, 'YY/MM/DD') &lt; SYSDATE - numtoyminterval(#{detail_int}, 'MONTH') 
+	    </if>
+	    <if test="mode == 'statement'">
+	         and order_canceldate IS NULL and order_delivery_now = #{detail_string}
+	    </if>
+	    order by order_code DESC
+	</select>
+	
+	<select id="getOrderListSearch" parameterType="java.util.List" resultType="OrderDTO">
+	    <choose>
+	        <when test="list != null and list.size() > 0">
+	            select * from order_tb
+	            where order_code IN
+	            <foreach item="orderCode" collection="list" open="(" separator="," close=")">
+	                #{orderCode}
+	            </foreach>
+	        </when>
+	        <otherwise>
+	            select * from order_tb where order_code = -1
+	        </otherwise>
+	    </choose>
+	</select>
+	
+</mapper>

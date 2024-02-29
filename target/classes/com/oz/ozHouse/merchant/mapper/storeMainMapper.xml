@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.merchant.mapper.storeMainMapper"> 
+	<select id="noticeTitleList" resultType="NoticeDTO">
+		select * from (
+		select * from notice order by notice_date desc)
+		where rownum between 1 and 3
+	</select>
+	
+	<select id="allCount" resultType="int" parameterType="Map">
+		select count (product_num) from product where mer_num=#{mer_num}
+	</select>
+	
+	<select id="waitCount" resultType="int" parameterType="Map">
+		select count (product_num) from product where product_approval_status in ('f', 'dr', 'ur') and mer_num=#{mer_num}
+	</select>
+	
+	<select id="requestCount" resultType="int" parameterType="Map">
+		select count (product_num) from product where product_approval_status = 're' and mer_num=#{mer_num}
+	</select>
+	
+	<select id="cancleCount" resultType="int" parameterType="Map">
+		select count (product_num) from product where product_approval_status = 'ca' and mer_num=#{mer_num}
+	</select>
+	
+	<select id="requestCancle" resultType="int" parameterType="Map">
+		select count (product_num) from product where product_approval_status in ('fc', 'dc', 'uc') and mer_num=#{mer_num}
+	</select>
+	
+	<select id="saleOk" resultType="int" parameterType="Map">
+		select count (product_num) from product where product_approval_status = 'ok' and mer_num=#{mer_num}
+	</select>
+	
+	<select id="productCount" resultType="int" parameterType="Map">
+		select count(*) from product_qa pq
+		join product p on pq.product_num = p.product_num
+		where p.mer_num = #{mer_num} and pq.product_qa_state='f'
+	</select>
+	
+	<select id="orderCount" resultType="int" parameterType="Map">
+		select count(*) from order_qa oq 
+		join order_tb ot on ot.order_num=oq.order_num 
+		join product p on p.product_num = ot.product_num
+		where p.mer_num = #{mer_num} and oq.order_qa_state='f'
+	</select>
+	
+	<select id="exchangeCount" resultType="int" parameterType="Map">
+		select count(*) from order_tb ot JOIN PRODUCT p  ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		where ot.order_orderlike='exchange' AND p.mer_num = #{mer_num} and ot.order_refund ='f'
+	</select>
+	
+	<select id="returnCount" resultType="int" parameterType="Map">
+		select count(*) from order_tb ot JOIN PRODUCT p  ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		where ot.order_orderlike='return' AND p.mer_num = #{mer_num} and ot.order_refund ='f'
+	</select>
+	
+	<select id="readyCount" resultType="int" parameterType="Map">
+		select count(*) from order_tb ot JOIN PRODUCT p  ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		where ot.order_delivery_now='ready' AND p.mer_num = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok' 
+	</select>
+	
+	<select id="deliveryCount" resultType="int" parameterType="Map">
+		select count(*) from order_tb ot JOIN PRODUCT p  ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		where ot.order_delivery_now='delivery' AND p.mer_num = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok' 
+	</select>
+	
+	<select id="completeCount" resultType="int" parameterType="Map">
+		select count(*) from order_tb ot JOIN PRODUCT p  ON ot.PRODUCT_NUM = p.PRODUCT_NUM 
+		where ot.order_delivery_now='complete' AND p.mer_num = #{mer_num} AND ot.ORDER_ORDERLIKE = 'ok' 
+	</select>
+	
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oz.ozHouse.merchant.mapper.myInformMapper"> 
+	
+	<select id="myInformView" parameterType="int" resultType="MerchantDTO">
+		select * from merchant where mer_num = #{mer_num}
+	</select>
+	
+	<select id="selectCateNameMain" parameterType="int" resultType="String">
+		select category_name from category where CATEGORY_NUM = #{inbrand_category}
+	</select>
+	
+	<update id="updateMerchant" parameterType="MerchantDTO">
+		update merchant set mer_comintro = #{mer_comintro},
+							mer_business_adress = #{mer_business_adress},
+							mer_business_registration = #{mer_business_registration},
+							mer_homepage = #{mer_homepage},
+							mer_name = #{mer_name},
+							mer_hp1 = #{mer_hp1},
+							mer_hp2 = #{mer_hp2},
+							mer_hp3 = #{mer_hp3},
+							mer_file = #{mer_file},
+							mer_othershop = #{mer_othershop},
+							mer_email = #{mer_email}
+		where mer_num = #{mer_num}
+	</update>
+	
+	<update id="updatePass" parameterType="map">
+		update merchant set mer_pw = #{mer_pw} where mer_id = #{mer_id}
+	</update>
+	
+	<update id="memberOut" parameterType="String">
+		update merchant set 
+		mer_delete='out', 
+		mer_closedate=sysdate, 
+		mer_opendate=sysdate + (INTERVAL '5' YEAR)
+		where mer_num=#{mer_num}
+	</update>
+</mapper>

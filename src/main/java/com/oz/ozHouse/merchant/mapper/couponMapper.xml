@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oz.ozHouse.merchant.mapper.couponMapper">
+
+	<delete id="mer_deletecoumsg" parameterType="int">
+		delete from msg where product_num=#{mer_couponnum} and status='coupon'
+	</delete>
+	
+	<select id="mer_msgCouView" parameterType="int" resultType="String">
+		select msg from msg where product_num=#{mer_couponnum} and status='coupon'
+	</select>
+	
+	<insert id="mer_couponInsert" parameterType="Mer_CouponDTO">
+		insert into mer_coupon values(
+			mer_couponnum_seq.nextval, 
+			#{mer_couponname, jdbcType=VARCHAR}, 
+			'f', 
+			#{mer_couponimage, jdbcType=VARCHAR}, 
+			#{mer_coupondiscount, jdbcType=NUMERIC}, 
+			#{mer_num, jdbcType=NUMERIC}, 
+			#{mer_couponusedate, jdbcType=VARCHAR}, 
+			#{mer_couponenddate, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="mer_couponList" parameterType="int" resultType="Mer_CouponDTO">
+		SELECT * FROM mer_coupon mc WHERE mc.mer_num = #{mer_num} ORDER BY mc.mer_couponnum DESC
+	</select>
+	
+	<select id="mer_couponCount" parameterType="int" resultType="int">
+		SELECT count(*) FROM mer_coupon mc WHERE mc.mer_num = #{mer_num}
+	</select>
+	
+	<select id="mer_searchCouponList" parameterType="Map" resultType="Mer_CouponDTO">
+		SELECT * FROM mer_coupon mc WHERE mc.mer_num = #{mer_num}
+		<if test="startDate != null and endDate != null">
+			and mc.${date} between #{startDate} and #{endDate} 
+		</if>
+		<if test="mer_isapproval != 'all'">
+			and mc.mer_isapproval = #{mer_isapproval}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    mc.mer_couponnum LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponname LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_isapproval LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_coupondiscount LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponusedate LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponenddate LIKE '%'||#{searchString}||'%'
+			)
+		</if>
+		<if test="search != null and search == 'mer_couponname'">
+			and mc.mer_couponname like '%'||#{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'mer_couponnum'">
+			and mc.mer_couponnum like '%'||#{searchString}||'%'
+		</if>
+	</select>
+	
+	<select id="mer_couponSearchCount" parameterType="Map" resultType="int">
+		SELECT count(*) FROM mer_coupon mc WHERE mc.mer_num = #{mer_num}
+		<if test="startDate != null and endDate != null">
+			and mc.${date} between #{startDate} and #{endDate} 
+		</if>
+		<if test="mer_isapproval != 'all'">
+			and mc.mer_isapproval = #{mer_isapproval}
+		</if>
+		<if test="search == 'all' and searchString != null">
+			and (
+			    mc.mer_couponnum LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponname LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_isapproval LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_coupondiscount LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponusedate LIKE '%'||#{searchString}||'%'
+			    OR mc.mer_couponenddate LIKE '%'||#{searchString}||'%'
+			)
+		</if>
+		<if test="search != null and search == 'mer_couponname'">
+			and mc.mer_couponname like '%'||#{searchString}||'%'
+		</if>
+		<if test="search != null and search == 'mer_couponnum'">
+			and mc.mer_couponnum like '%'||#{searchString}||'%'
+		</if>
+	</select>
+	
+	<delete id="mer_couponDelete" parameterType="int">
+		delete from mer_coupon where mer_couponnum = #{mer_couponnum}
+	</delete>
+</mapper>

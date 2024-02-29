@@ -1,0 +1,657 @@
+/*mainStyle.css*/
+/* 이름이 "slide"인 요소를 숨김 */
+[name="slide"] {
+    display: none;
+}
+
+/* 슬라이드 전체를 감싸는 상자 스타일 */
+.slideBox {
+    position: relative;
+    max-width: 1000px;
+    top: 0;
+    left: 18%;
+    width: 100%;
+    height: 400px;
+    margin: 0; 
+    padding: 0;
+}
+
+/* 슬라이드 이미지의 최대 폭 설정 */
+.slideBox img {
+    max-width: 100%;
+}
+
+/* 슬라이드 목록의 스타일 */
+.slideBox .slideList {
+    white-space: nowrap;
+    font-size: 0;
+    overflow: hidden;
+}
+
+/* 슬라이드 항목의 공통 스타일 */
+.slideBox .slideItem {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    transition: all .35s;
+}
+
+/* 슬라이드 항목 안의 레이블 스타일 */
+.slideBox .slideItem label {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* 왼쪽 화살표 레이블 스타일 */
+label.left {
+    left: 20px;
+    background-color: #5F5F5F;
+    background-image: url('images/left-arrow.png');
+    background-position: center center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+}
+
+/* 오른쪽 화살표 레이블 스타일 */
+label.right {
+    right: 20px; /* 수정: left가 아닌 right로 변경 */
+    background-color: #5F5F5F;
+    background-image: url('images/right-arrow.png');
+    background-position: center center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+}
+
+/* 각각의 slide 요소에 대한 애니메이션 및 트랜스폼 스타일 */
+[id="slide01"]:checked ~ .slideList .slideItem {
+    transform: translateX(0);
+    animation: slide01 10s infinite;
+}
+
+[id="slide02"]:checked ~ .slideList .slideItem {
+    transform: translateX(-100%);
+    animation: slide02 10s infinite;
+}
+
+[id="slide03"]:checked ~ .slideList .slideItem {
+    transform: translateX(-200%);
+    animation: slide03 10s infinite;
+}
+
+[id="slide04"]:checked ~ .slideList .slideItem {
+    transform: translateX(-300%);
+    animation: slide04 10s infinite;
+}
+
+/* slide02, slide03, slide04의 애니메이션 키프레임 정의 */
+@keyframes slide01 {
+    0% { left: 0%; }
+    23% { left: 0%; }
+    25% { left: -100%; }
+    48% { left: -100%; }
+    50% { left: -200%; }
+    73% { left: -200%; }
+    75% { left: -300%; }
+    98% { left: -300%; }
+    100% { left: 0%; }
+}
+
+/* slide02의 애니메이션 키프레임 정의 */
+@keyframes slide02 {
+    0% { left: 0%; }
+    23% { left: 0%; }
+    25% { left: 100%; }
+    48% { left: 100%; }
+    50% { left: 200%; }
+    73% { left: 200%; }
+    75% { left: 0%; }
+    98% { left: 0%; }
+    100% { left: -100%; } /* 수정: 마지막 슬라이드로 이동 */
+}
+
+/* slide03의 애니메이션 키프레임 정의 */
+@keyframes slide03 {
+    0% { left: 0%; }
+    23% { left: 0%; }
+    25% { left: 100%; }
+    48% { left: 100%; }
+    50% { left: 200%; }
+    73% { left: 200%; }
+    75% { left: 0%; }
+    98% { left: 0%; }
+    100% { left: -200%; } /* 수정: 마지막 슬라이드로 이동 */
+}
+
+/* slide04의 애니메이션 키프레임 정의 */
+@keyframes slide04 {
+    0% { left: 0%; }
+    23% { left: 0%; }
+    25% { left: 100%; }
+    48% { left: 100%; }
+    50% { left: 200%; }
+    73% { left: 200%; }
+    75% { left: 0%; }
+    98% { left: 0%; }
+    100% { left: -300%; } /* 수정: 마지막 슬라이드로 이동 */
+}
+
+#footer {
+	position : relative;
+    transform : translateY(430%);
+	width: 100%;
+	height: 150px;
+	background: #2f3238;
+}
+ 
+.family_site_wrap {
+	position: absolute;
+	top: 30px;
+	right: 40px;
+	width: 238px;
+	height: 151px;
+	text-align: center;
+}
+
+.family_site_wrap a {
+	color: #b1b3b9;
+}
+
+.familysite_select {
+	position: relative;
+	float: left;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	border: 1px solid #474a51;
+	background-color: #34373d;
+}
+
+.familysite_select a {
+	float: left;
+	width: 100%;
+	height: 100%;
+	font-size: 13px;
+}
+
+.family_arrow {
+	position: absolute;
+	top: 0px;
+	right: 10px;
+}
+
+.familysite_list {
+	float: left;
+	padding: 0 15px;
+	width: 208px;
+	border: 1px solid #474a51;
+	border-top: none;
+	display: none;
+}
+
+.familysite_list ul {
+	/* float: left; */
+	padding: 0 8px;
+	/* width: 192px; */
+	height: 36px;
+	line-height: 36px;
+	border-top: 1px solid #474a51;
+	display: flex;
+	justify-content: space-between;
+}
+
+.familysite_list ul:first-child {
+	border-top: none;
+}
+
+.familysite_list ul li {
+	/* float: left;
+	margin-left: 19px; */
+	font-size: 12px;
+}
+
+.familysite_list ul li:first-child {
+	margin-left: 0px;
+}
+
+.familysite_list ul li a:hover {
+	color: #f68500;
+}
+
+.maple_list li {
+	margin-left: 8px !important;
+}
+
+.maple_list li:first-child {
+	margin-left: 0px !important;
+}
+
+.footer_info {
+	float: left;
+	margin-top: 46px;
+}
+
+.footer_info ul {
+    position: relative;
+    left: 35%;
+}
+
+.footer_info ul li {
+	float: left;
+	padding: 0 13px;
+	font-size: 12px;
+	background: url("https://ssl.nexon.com/s2/game/maplestory/renewal/common/footer_line.png") no-repeat;
+}
+
+.footer_info ul li:first-child {
+	padding-left: 0px;
+	background: none;
+}
+
+.footer_info ul li a {
+	color: #b1b3b9;
+}
+
+.footer_info ul li a:hover {
+	text-decoration: underline;
+}
+
+.footer_info p {
+    position: relative;
+    left: 35%;
+    line-height: 1.5;
+    margin-top: 21px;
+    font-size: 11px;
+    color: #b1b3b9;
+}
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 0;
+    text-decoration: none;
+    font-family: "NanumBarunGothic", "Malgun Gothic", sans-serif;
+    letter-spacing: -0.03em;
+}
+
+.css-7hbob3 {
+	font-size: 30px;
+	line-height: 42px;
+	font-weight: 700;
+	color: #2F3438;
+	margin: 30px 285px 1px;
+}
+
+@media ( max-width : 767px) {
+	.css-7hbob3 {
+		display: none;
+	}
+}
+
+.css-hpu1zu {
+	font-size: 16px;
+	line-height: 15px;
+	color: #828C94;
+	display: block;
+	margin: 10px 285px 10px;
+}
+
+@media ( max-width : 767px) {
+	.css-hpu1zu {
+		display: none;
+	}
+}
+
+.css-gb4vgv {
+	margin: 0 -16px;
+}
+
+@media ( min-width : 768px) {
+	.css-gb4vgv {
+		margin: 0 -16px 12px;
+		display: none;
+	}
+}
+
+.btu {
+	float: right;
+	position: relative;
+	right: 130px;
+	bottom: 25px;
+}
+
+.css-av2k9l {
+	display: inline-block;
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	background: none;
+	font-style: inherit;
+	font-variant: inherit;
+	font-stretch: inherit;
+	font-family: inherit;
+	font-optical-sizing: inherit;
+	font-kerning: inherit;
+	font-feature-settings: inherit;
+	font-variation-settings: inherit;
+	font-size: 16px;
+	line-height: 20px;
+	font-weight: 700;
+	color: #50E5B4;
+	cursor: pointer;
+}
+
+.css-9oiyo {
+	margin: -15px 150px;
+	position: relative;
+	height: fit-content
+}
+
+.space {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0
+}
+
+.space2 {
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-top: 0;
+}
+
+.space3 {
+	overflow-anchor: none;
+	position: relative;
+	left: 6.5%;
+}
+
+@media ( max-width : 1023px) {
+	.css-9oiyo {
+		margin: -15px -8px;
+	}
+}
+
+@media ( max-width : 767px) {
+	.css-9oiyo {
+		margin: 0 -8px;
+	}
+}
+
+.css-1bpmso0 {
+	width: 100%;
+	display: flex;
+}
+
+.css-1bpmso0>* {
+	width: 25%;
+}
+
+.css-ylurzg {
+	display: block;
+	position: relative;
+	padding: 16px 0;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid #EAEDEF;
+	padding: 30px 50px !important;
+}
+
+@media ( min-width : 768px) {
+	.css-ylurzg {
+		display: block;
+		border: 0;
+		padding: 0;
+	}
+}
+
+.css-ylurzg>a {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+}
+
+.css-ylurzg>a.focus-visible:focus ~.product-thumbnail .thumbnail-image {
+	transform: translate(-50%, -50%) scale(1.1);
+}
+
+.css-ylurzg>a.focus-visible:focus ~.product-info .product-name {
+	opacity: 0.5;
+}
+
+@media ( hover : hover) and (pointer: fine) {
+	.css-ylurzg>a:hover ~.product-thumbnail .thumbnail-image, .css-ylurzg>a:active
+		 ~.product-thumbnail .thumbnail-image {
+		transform: translate(-50%, -50%) scale(1.1);
+	}
+	.css-ylurzg>a:hover ~.product-info .product-name, .css-ylurzg>a:active 
+		 ~.product-info .product-name {
+		opacity: 0.5;
+	}
+}
+
+@media ( max-width : 1023px) {
+	.css-ylurzg {
+		padding: 15px 8px !important;
+	}
+}
+
+@media ( max-width : 767px) {
+	.css-ylurzg {
+		padding: 16px 0px !important;
+	}
+}
+
+.css-bga0xs {
+	-webkit-flex: 1 0 48%;
+	-ms-flex: 1 0 48%;
+	flex: 1 0 48%;
+}
+
+.css-pr93pi {
+	position: relative;
+	padding-bottom: 100%;
+	background-color: transparent;
+	border-radius: 4px;
+}
+
+.css-pr93pi:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: transparent;
+	border-radius: 4px;
+}
+
+.css-5dnyrm {
+	display: inline-block;
+	font-size: 24px;
+	line-height: 1;
+	transform: translateZ(0);
+}
+
+.css-5dnyrm>svg {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.css-5dnyrm>svg {
+	filter: drop-shadow(0 2px 5px rgba(63, 71, 77, 0.25));
+}
+
+.css-q7lffx {
+	opacity: 0;
+}
+
+.css-whh5e5 {
+	opacity: 1;
+}
+
+.css-ypqde8 {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.css-j9woce {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	transform: translate(-50%, -50%);
+	transition: .2s transform;
+}
+
+.css-1t4i64 {
+	height: inherit;
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	transform: translate(-50%, -50%);
+	transition: .2s transform;
+	background-size: cover;
+}
+
+.css-1l77jhx {
+	background-color: transparent;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	transform: translate(-50%, -50%);
+	transition: .2s transform;
+}
+
+.css-b2xyg5 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	transition: .2s background-color;
+}
+
+.css-17wu10g {
+	width: 100%;
+	margin-left: 12px;
+}
+
+@media ( min-width : 768px) {
+	.css-17wu10g {
+		margin: 0;
+	}
+}
+
+.css-1r0yqr6 {
+	margin-top: 10px;
+}
+
+.css-11vbb10 {
+	font-size: 12px;
+	line-height: 16px;
+	display: block;
+	word-break: break-all;
+	color: #828C94;
+}
+
+.css-vbg47w {
+	overflow: hidden;
+	margin-top: 5px
+}
+
+.css-1opz4n5 {
+	color: #50E5B4;
+	font-weight: 700;
+}
+
+.css-bga0xs {
+	-webkit-flex: 1 0 48%;
+	-ms-flex: 1 0 48%;
+	flex: 1 0 48%;
+}
+
+.css-1lyaokr {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
+	font: inherit;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 36px;
+	height: 36px;
+	position: relative;
+	position: absolute;
+	bottom: 145px;
+	right: 4px;
+	z-index: 10;
+}
+
+.css-1lyaokr.focus-visible:focus {
+	opacity: 0.5;
+}
+
+@media ( hover : hover) and (pointer: fine) {
+	.css-1lyaokr:hover, .css-1lyaokr:active {
+		opacity: 0.5;
+	}
+}
+
+.css-7hbob4 {
+	position: relative;
+	top: 300px;
+	font-size: 30px;
+	line-height: 42px;
+	font-weight: 700;
+	color: #2F3438;
+	margin: 30px 285px 1px;
+}
+
+@media ( max-width : 767px) {
+	.css-7hbob4 {
+		display: none;
+	}
+}
+
+.css-hpu1zu1 {
+	position: relative;
+	top: 300px;
+	font-size: 16px;
+	line-height: 15px;
+	color: #828C94;
+	display: block;
+	margin: 10px 285px 10px;
+}
+
+@media ( max-width : 767px) {
+	.css-hpu1zu1 {
+		display: none;
+	}
+}
+
+.btu1 {
+	float: right;
+	position: relative;
+	top: 260px;
+	right: 130px;
+}

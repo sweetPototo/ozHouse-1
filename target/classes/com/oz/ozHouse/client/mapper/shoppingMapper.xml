@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oz.ozHouse.mapper.shoppingMapper">
+
+	<select id="main_listProduct" resultType="productDTO">
+		select * from product
+	</select>
+
+	<select id="main_listCate" resultType="categoryDTO">
+		select * from category
+	</select>
+
+	<select id="main_listBlog" resultType="BlogDTO">
+		select * from blog ORDER
+		BY blog_num DESC
+	</select>
+
+	<select id="todays" resultType="BlogDTO">
+		select * from product where
+		product_spec = #{product_spec}
+	</select>
+
+	<insert id="main_review" parameterType="ReviewDTO">
+		insert into review values
+		(review_num_seq.nextval, #{member_id, jdbcType=VARCHAR},
+		#{review_star, jdbcType=NUMERIC}, #{review_content, jdbcType=VARCHAR},
+		#{review_image, jdbcType=VARCHAR},
+		#{product_num, jdbcType=NUMERIC},
+		#{review_like}, sysdate)
+	</insert>
+
+	<select id="main_listReview" resultType="ReviewDTO">
+		select * from review where product_num = #{product_num}
+		order by review_num DESC
+	</select>
+
+	<select id="shop_getMember" resultType="MemberDTO">
+		select * from member
+		where
+		member_id = #{member_id}
+	</select>
+
+	<update id="orderCancel" parameterType="java.lang.Long">
+		update order_tb
+		set order_canceldate = sysdate, order_orderlike = 'return' where
+		order_code = #{order_code}
+	</update>
+
+	<update id="setProductQuantity" parameterType="ProductDTO">
+		update product
+		set product_quantity = #{product_quantity} where product_num =
+		#{product_num}
+	</update>
+
+	<select id="review_count" resultType="int">
+		select count(*) from review
+		where product_num = #{product_num}
+	</select>
+
+	<select id="totallist" parameterType="java.util.Map"
+		resultType="productDTO">
+		select * from Product where ${product_spec} = #{specvalue}
+	</select>
+	<update id="updateMemberPoint" parameterType="MemberDTO">
+		update member
+		set member_point = #{member_point} where member_num = #{member_num}
+	</update>
+
+	<update id="selectedCoupons" parameterType="User_CouponDTO">
+		update user_coupon
+		set order_code = #{order_code} where member_num = #{member_num} and
+		mer_coupon_num = #{mer_coupon_num}
+	</update>
+
+	<select id="selectOrderCoupon" parameterType="java.lang.Long"
+		resultType="Mer_CouponDTO">
+		select *
+		from mer_coupon a
+		inner join user_coupon b
+		on a.mer_couponnum = b.mer_coupon_num
+		where b.order_code = #{order_code}
+	</select>
+
+	<update id="updateOrderProduct" parameterType="ProductDTO">
+		UPDATE product
+		SET product_quantity = #{product_quantity}, product_purchases_count =
+		#{product_purchases_count}
+		WHERE product_num = #{product_num}
+	</update>
+
+	<select id="getProductClient" resultType="ProductDTO">
+		select * from product
+		where product_num = #{product_num}
+	</select>
+
+	<select id="selectBySpec" parameterType="String"
+		resultType="productDTO">
+		select * from product where product_spec = #{product_spec}
+	</select>
+
+	<insert id="insertOrder" parameterType="OrderDTO">
+		INSERT INTO order_tb (order_code, member_id, product_num, order_price,
+		order_dis_coupon, order_dis_discount, order_dis_point,
+		order_comment, order_count, order_date, order_place, order_delivery_now,
+		order_canceldate, order_orderlike, order_refund, order_num,
+		order_assembly_cost,
+		order_name, order_hp1, order_hp2, order_hp3, order_postcode)
+		VALUES (#{order_code}, #{member_id}, #{product_num}, #{order_price},
+		#{order_dis_coupon}, #{order_dis_discount, jdbcType=INTEGER},
+		#{order_dis_point},
+		#{order_comment}, #{order_count}, sysdate, #{order_place}, 'ready',
+		#{order_canceldate, jdbcType=VARCHAR}, #{order_orderlike, jdbcType=VARCHAR},
+		#{order_refund, jdbcType=VARCHAR},
+		order_num_seq.nextval, #{order_assembly_cost}, #{order_name},
+		#{order_hp1}, #{order_hp2}, #{order_hp3}, #{order_postcode})
+	</insert>
+
+	<select id="getOrder" parameterType="java.lang.Long"
+		resultType="OrderDTO">
+		select * from order_tb where order_code = #{order_code}
+	</select>
+
+	<select id="getOrderCode" parameterType="String"
+		resultType="java.lang.Long">
+		select distinct order_code from order_tb where member_id =
+		#{member_id}
+	</select>
+
+	<select id="getUserOrderList" parameterType="String"
+		resultType="OrderDTO">
+		select * from order_tb where member_id = #{member_id}
+	</select>
+
+	<select id="getOrderProductShopping" parameterType="int"
+		resultType="ProductDTO">
+		select * from product where product_num = #{product_num}
+	</select>
+
+	<select id="getOrderStatement" parameterType="java.lang.Long"
+		resultType="String">
+		select distinct order_delivery_now from order_tb where
+		order_code = #{order_code}
+	</select>
+
+	<insert id="main_insertScrap" parameterType="hashmap">
+		insert into scrap
+		values(scrap_seq.nextval, #{member_num}, #{product_num}, sysdate)
+	</insert>
+
+	<select id="main_checkScrap" parameterType="hashmap"
+		resultType="ScrapDTO">
+		select * from scrap
+		where member_num = #{member_num} and
+		product_num = #{product_num}
+	</select>
+
+	<delete id="main_deleteScrap" parameterType="hashmap">
+		delete from scrap
+		where member_num = #{member_num} and product_num = #{product_num}
+	</delete>
+
+	<select id="main_scrap_count" resultType="int">
+		select count(*) as
+		scrap_count from scrap
+		where product_num = #{product_num}
+	</select>
+	<update id="updateProductNormal">
+		update product set product_spec = 'normal'
+	</update>
+
+	<select id="selectBestProduct" resultType="ProductDTO">
+		SELECT p.*
+		FROM product p
+		LEFT JOIN (
+		SELECT product_num, SUM(order_count) AS total_order_count
+		FROM order_tb
+		GROUP BY product_num
+		) o ON p.product_num = o.product_num
+		WHERE p.product_spec = 'best'
+		ORDER BY o.total_order_count DESC
+	</select>
+
+	<update id="updateBestProduct">
+		UPDATE product a
+		SET a.product_spec = 'best'
+		WHERE a.product_num IN (
+		SELECT b.product_num
+		FROM order_tb b
+		WHERE b.order_date &gt; SYSDATE - INTERVAL '7' DAY
+		GROUP BY b.product_num
+		HAVING SUM(b.order_count) &gt; 5
+		)
+	</update>
+
+	<select id="selectTodayProduct" resultType="ProductDTO">
+		select * from product WHERE product_today = TO_CHAR(sysdate, 'YY/MM/DD')
+	</select>
+</mapper>
